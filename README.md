@@ -81,3 +81,4 @@ public/           # Static assets and PWA manifest
 - **Course**: AI in Practice (Xamk)
 - **Student**: Prathama Pandey
 - **Objective**: Build a robust, agent-informed web application using modern full-stack tools.
+- **Submission Details**: [View Assignment Submission](./ASSIGNMENT_SUBMISSION.md)
