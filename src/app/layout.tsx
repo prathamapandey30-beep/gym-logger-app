@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
+import RestTimer from "@/components/RestTimer";
 
 export const metadata: Metadata = {
   title: "Gym Logger",
@@ -22,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main style={{ maxWidth: 480, margin: "0 auto", padding: "0 16px 80px" }}>
           {children}
         </main>
+        <RestTimer />
       </body>
     </html>
   );

@@ -1,8 +1,1 @@
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /workouts/{document=**} {
-      allow read, write: if true;
-    }
-  }
-}
+rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /workouts/{workoutId} {\n      allow read, write: if true;\n    }\n  }\n}

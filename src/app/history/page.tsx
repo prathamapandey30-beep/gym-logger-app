@@ -19,12 +19,20 @@ function groupByDate(workouts: Workout[]) {
 export default function HistoryPage() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getAllWorkouts().then((ws) => {
-      setWorkouts(ws);
-      setLoading(false);
-    });
+    getAllWorkouts()
+      .then((ws) => {
+        setWorkouts(ws);
+      })
+      .catch((e) => {
+        console.error(e);
+        setError("History could not be loaded.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const grouped = groupByDate(workouts);
@@ -51,6 +59,18 @@ export default function HistoryPage() {
       {loading ? (
         <div style={{ textAlign: "center", color: "var(--color-muted)", padding: 40 }} className="animate-pulse-soft">
           Loading…
+        </div>
+      ) : error ? (
+        <div style={{
+          textAlign: "center",
+          padding: "24px",
+          background: "rgba(255, 71, 87, 0.1)",
+          borderRadius: 20,
+          border: "1px solid var(--color-danger)",
+          color: "var(--color-danger)",
+        }}>
+          <p style={{ fontWeight: 600, marginBottom: 4 }}>Error</p>
+          <p style={{ fontSize: 13, opacity: 0.8 }}>{error}</p>
         </div>
       ) : dates.length === 0 ? (
         <div style={{

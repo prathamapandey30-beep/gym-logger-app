@@ -4,6 +4,8 @@ export interface WorkoutEntry {
   movement: string;
   reps: number;
   weight: number;
+  notes?: string;
+  setNum?: number;
 }
 
 export interface Workout {

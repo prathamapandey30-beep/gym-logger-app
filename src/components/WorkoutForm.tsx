@@ -6,13 +6,15 @@ interface Props {
   onAdd: (entry: WorkoutEntry) => void;
   lastEntry?: WorkoutEntry;
   suggestions: string[];
+  currentEntries?: WorkoutEntry[];
 }
 
-export default function WorkoutForm({ onAdd, lastEntry, suggestions }: Props) {
+export default function WorkoutForm({ onAdd, lastEntry, suggestions, currentEntries }: Props) {
   const [movement, setMovement] = useState("");
   const [reps, setReps] = useState("");
   const [weight, setWeight] = useState("");
   const [unit, setUnit] = useState<"kg" | "lbs">("kg");
+  const [notes, setNotes] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [loading, setLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -21,15 +23,24 @@ export default function WorkoutForm({ onAdd, lastEntry, suggestions }: Props) {
     (s) => s.toLowerCase().includes(movement.toLowerCase()) && movement.length > 0
   );
 
+  const setNum = (currentEntries?.filter(e => e.movement.toLowerCase() === movement.toLowerCase()).length || 0) + 1;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!movement.trim() || !reps || !weight) return;
     setLoading(true);
     const w = unit === "lbs" ? parseFloat(weight) * 0.453592 : parseFloat(weight);
-    await onAdd({ movement: movement.trim(), reps: parseInt(reps), weight: parseFloat(w.toFixed(1)) });
+    await onAdd({
+      movement: movement.trim(),
+      reps: parseInt(reps),
+      weight: parseFloat(w.toFixed(1)),
+      notes: notes.trim() || undefined,
+      setNum,
+    });
     setMovement("");
     setReps("");
     setWeight("");
+    setNotes("");
     setLoading(false);
     inputRef.current?.focus();
   };
@@ -73,6 +84,23 @@ export default function WorkoutForm({ onAdd, lastEntry, suggestions }: Props) {
           style={inputStyle}
           autoComplete="off"
         />
+        {movement && (
+          <div style={{
+            position: "absolute",
+            right: 12,
+            top: "50%",
+            transform: "translateY(-50%)",
+            fontSize: 12,
+            fontWeight: 800,
+            color: "var(--color-primary)",
+            background: "rgba(124,111,255,0.1)",
+            padding: "4px 8px",
+            borderRadius: 6,
+            pointerEvents: "none",
+          }}>
+            SET {setNum}
+          </div>
+        )}
         {showSuggestions && filtered.length > 0 && (
           <div style={{
             position: "absolute",
@@ -201,6 +229,15 @@ export default function WorkoutForm({ onAdd, lastEntry, suggestions }: Props) {
           {loading ? "Adding…" : "+ Log Set"}
         </button>
       </div>
+
+      {/* Notes Field */}
+      <input
+        type="text"
+        placeholder="Notes (optional, e.g. 'Paused reps')"
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        style={{ ...inputStyle, padding: "10px 14px", fontSize: 14 }}
+      />
     </form>
   );
 }

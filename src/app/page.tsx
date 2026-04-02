@@ -14,6 +14,7 @@ export default function HomePage() {
   const [workouts, setWorkouts] = useState<Workout[]>([]);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeWorkoutId, setActiveWorkoutId] = useState<string | null>(null);
 
   const today = new Date().toLocaleDateString("en-GB", {
@@ -22,11 +23,18 @@ export default function HomePage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    const [ws, names] = await Promise.all([getTodaysWorkouts(), getMovementNames()]);
-    setWorkouts(ws);
-    setSuggestions(names);
-    if (ws.length > 0 && !activeWorkoutId) setActiveWorkoutId(ws[0].id);
-    setLoading(false);
+    setError(null);
+    try {
+      const [ws, names] = await Promise.all([getTodaysWorkouts(), getMovementNames()]);
+      setWorkouts(ws);
+      setSuggestions(names);
+      if (ws.length > 0 && !activeWorkoutId) setActiveWorkoutId(ws[0].id);
+    } catch (e) {
+      console.error(e);
+      setError("Database connection failed. Please check your Firestore setup.");
+    } finally {
+      setLoading(false);
+    }
   }, [activeWorkoutId]);
 
   useEffect(() => { load(); }, []); // eslint-disable-line
@@ -128,6 +136,7 @@ export default function HomePage() {
           onAdd={handleAddEntry}
           lastEntry={lastEntry}
           suggestions={suggestions}
+          currentEntries={workouts.find(w => w.id === activeWorkoutId)?.entries || []}
         />
       </div>
 
@@ -135,6 +144,18 @@ export default function HomePage() {
       {loading ? (
         <div style={{ textAlign: "center", color: "var(--color-muted)", padding: 40 }} className="animate-pulse-soft">
           Loading…
+        </div>
+      ) : error ? (
+        <div style={{
+          textAlign: "center",
+          padding: "24px",
+          background: "rgba(255, 71, 87, 0.1)",
+          borderRadius: 20,
+          border: "1px solid var(--color-danger)",
+          color: "var(--color-danger)",
+        }}>
+          <p style={{ fontWeight: 600, marginBottom: 4 }}>Oops! Something went wrong</p>
+          <p style={{ fontSize: 13, opacity: 0.8 }}>{error}</p>
         </div>
       ) : workouts.length === 0 ? (
         <div style={{

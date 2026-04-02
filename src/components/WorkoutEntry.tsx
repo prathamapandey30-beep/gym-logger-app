@@ -36,7 +36,7 @@ export default function WorkoutEntryCard({ entry, index, onDelete }: Props) {
           fontWeight: 700,
           flexShrink: 0,
         }}>
-          {index + 1}
+          {entry.setNum || index + 1}
         </span>
         <div>
           <div style={{ fontWeight: 600, fontSize: 15, color: "var(--color-text)" }}>
@@ -45,6 +45,17 @@ export default function WorkoutEntryCard({ entry, index, onDelete }: Props) {
           <div style={{ fontSize: 13, color: "var(--color-muted)", marginTop: 2 }}>
             {entry.reps} reps · {entry.weight} kg
           </div>
+          {entry.notes && (
+            <div style={{ 
+              fontSize: 12, 
+              color: "var(--color-accent)", 
+              marginTop: 4, 
+              fontStyle: "italic",
+              opacity: 0.9 
+            }}>
+              {entry.notes}
+            </div>
+          )}
         </div>
       </div>
       {onDelete && (

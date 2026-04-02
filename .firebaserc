@@ -1,5 +1,7 @@
 {
-  "projects": {},
+  "projects": {
+    "default": "gym-logger-eada7"
+  },
   "targets": {},
   "etags": {}
 }

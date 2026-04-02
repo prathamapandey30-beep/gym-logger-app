@@ -28,13 +28,23 @@ const db = getFirestore(app);
 const workoutsRef = collection(db, "workouts");
 
 export async function addWorkout(entries: WorkoutEntry[]): Promise<string> {
-  const now = Timestamp.now();
-  const ref = await addDoc(workoutsRef, { date: now, entries, createdAt: now });
-  return ref.id;
+  try {
+    const now = Timestamp.now();
+    const ref = await addDoc(workoutsRef, { date: now, entries, createdAt: now });
+    return ref.id;
+  } catch (error) {
+    console.error("Failed to add workout:", error);
+    throw error;
+  }
 }
 
 export async function updateWorkoutEntries(id: string, entries: WorkoutEntry[]) {
-  await updateDoc(doc(db, "workouts", id), { entries });
+  try {
+    await updateDoc(doc(db, "workouts", id), { entries });
+  } catch (error) {
+    console.error("Failed to update workout entries:", error);
+    throw error;
+  }
 }
 
 export async function deleteWorkout(id: string) {
@@ -42,24 +52,34 @@ export async function deleteWorkout(id: string) {
 }
 
 export async function getTodaysWorkouts(): Promise<Workout[]> {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date(today);
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  const q = query(
-    workoutsRef,
-    where("date", ">=", Timestamp.fromDate(today)),
-    where("date", "<", Timestamp.fromDate(tomorrow)),
-    orderBy("date", "desc")
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Workout[];
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const q = query(
+      workoutsRef,
+      where("date", ">=", Timestamp.fromDate(today)),
+      where("date", "<", Timestamp.fromDate(tomorrow)),
+      orderBy("date", "desc")
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Workout[];
+  } catch (error) {
+    console.error("Failed to fetch today's workouts:", error);
+    return [];
+  }
 }
 
 export async function getAllWorkouts(): Promise<Workout[]> {
-  const q = query(workoutsRef, orderBy("date", "desc"));
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Workout[];
+  try {
+    const q = query(workoutsRef, orderBy("date", "desc"));
+    const snap = await getDocs(q);
+    return snap.docs.map((d) => ({ id: d.id, ...d.data() })) as Workout[];
+  } catch (error) {
+    console.error("Failed to fetch all workouts:", error);
+    return [];
+  }
 }
 
 export async function getMovementNames(): Promise<string[]> {
