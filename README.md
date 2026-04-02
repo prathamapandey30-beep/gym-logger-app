@@ -5,7 +5,7 @@ A minimal, high-performance, and mobile-first gym workout logger built for the *
 Designed for efficiency at the gym, this app allows you to log sets in under 5 seconds with a premium dark-mode interface.
 
 ## 🚀 Live Demo
-[Deployment Link (Vercel) TBA] | [GitHub Repository](https://github.com/prathamapandey30-beep/gym-logger-app)
+[Live Vercel Deployment](https://gym-logger-app-beta.vercel.app/) | [GitHub Repository](https://github.com/prathamapandey30-beep/gym-logger-app)
 
 ---
 
